@@ -1,0 +1,11 @@
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\bin\Debug\Pricob.exe.config
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\bin\Debug\Pricob.exe
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\bin\Debug\Pricob.pdb
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\bin\Debug\OpenTK.dll
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\bin\Debug\OpenTK.pdb
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\bin\Debug\OpenTK.xml
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\obj\Debug\Pricob.csproj.AssemblyReference.cache
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\obj\Debug\Pricob.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\obj\Debug\Pricob.csproj.CopyComplete
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\obj\Debug\Pricob.exe
+C:\Users\Administrator\Documents\GitHub\Pricob\Pricob\obj\Debug\Pricob.pdb
