@@ -4,7 +4,7 @@
 2. DotNet Framework 4.8.x - runtime + SDK
 
 
-# Laborator 3
+# Laborator 2
 1. Modificarea Viewportului defineste suprafata pe care proiectia scenei 3D va avea loc.
 >
 2. Tema practica se poate gasi [aici](https://github.com/BP-Feral/ElementeDeGrafica/tree/main/Pricob).
