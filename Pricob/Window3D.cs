@@ -1,24 +1,30 @@
-﻿using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
+﻿using System.Collections.Generic;
 using System;
-using System.Drawing;
+
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics;
+using OpenTK.Input;
+using OpenTK;
+
 
 namespace Pricob
 {
     internal class Window3D : GameWindow
     {
-        // Valori Cub laboratorul 2
-        private float cubeSize = 2.0f;
-        private Vector3 cubePosition = Vector3.Zero;
-        
-        private MouseState prevMouseState;
+        // switch render from 1 to multiple
+        private bool multiple = false;
 
+        private bool generated = false;
+
+        private Menu menu = new Menu(); // Menu <lab3>
+        private List<Cube> cubes = new List<Cube>(1)
+        {
+            new Cube()
+        };
+ 
         public Window3D() : base(800, 600, new GraphicsMode(32, 24, 0, 8))
         {
             VSync = VSyncMode.On;
-
         }
 
         protected override void OnLoad(EventArgs e)
@@ -30,25 +36,46 @@ namespace Pricob
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
 
-
             GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Nicest);
 
-            prevMouseState = Mouse.GetState();
+            menu.show();
+
+            loadCubes();
         }
 
+        private void loadCubes()
+        {
+            if (multiple)
+            {
+                for (int i = 0; i < 40; i++)
+                {
+                    for (int j = 0; j < 40; j++)
+                    {
+                        for (int k = 0; k < 40; k++)
+                        {
+                            cubes.Add(new Cube(i * 20, j * 20, k * 20));
+                        }
+                    }
+                }
+            } else
+            {
+                cubes.Add(new Cube());
+            }
+        }
+        
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
 
-            // Setare Viewport
-            GL.Viewport(0, 0, this.Width, this.Height);
+            // Viewport
+            GL.Viewport(0, 0, Width, Height);
 
-            // Setare Perspectiva
-            Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)this.Width / (float)this.Height, 1, 256);
+            // Perspective
+            Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, Width / (float)Height, 1, 2000);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref perspective);
 
-            // Setare Camera
+            // Camera
             Matrix4 lookat = Matrix4.LookAt(30, 30, 30, 0, 0, 0, 0, 1, 0);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref lookat);
@@ -58,66 +85,33 @@ namespace Pricob
         {
             base.OnUpdateFrame(e);
 
-            // Cod Logica
+            // Logic
             KeyboardState thisKeyboard = Keyboard.GetState();
             MouseState thisMosue = Mouse.GetState();
-
+            // Close Application
             if (thisKeyboard[Key.Escape])
             {
                 Exit();
             }
 
-            // Miscare cub cu mouse Laboratorul 2
-            int deltaX = thisMosue.X - prevMouseState.X;
-            int deltaY = thisMosue.Y - prevMouseState.Y;
-
-            cubePosition.X += deltaX * 0.1f;
-            cubePosition.Y -= deltaY * 0.1f;
-
-            prevMouseState = thisMosue;
-
-            // Miscare cub cu tastatura Laboratorul 2
-            float moveSpeed = 1.0f;
-            if (thisKeyboard[Key.W])
+            if (thisKeyboard[Key.G] && generated == false)
             {
-                cubePosition.Z -= moveSpeed;
+                generated = true;
+                cubes.Add(new Cube());
+            }
+            if (!thisKeyboard[Key.G])
+            {
+                generated = false;
             }
 
-            if (thisKeyboard[Key.S])
+            // Update Cube position <lab3>
+            for (int i = 0; i < cubes.Count; i++)
             {
-                cubePosition.Z += moveSpeed;
+                cubes[i].updatePos(thisMosue, thisKeyboard); // WASD, QE, R, mouse_x, mouse_y
             }
 
-            if (thisKeyboard[Key.A])
-            {
-                cubePosition.X -= moveSpeed;
-            }
-
-            if (thisKeyboard[Key.D])
-            {
-                cubePosition.X += moveSpeed;
-            }
-
-            if (thisKeyboard[Key.Q])
-            {
-                cubePosition.Y -= moveSpeed;
-            }
-
-            if (thisKeyboard[Key.E])
-            {
-                cubePosition.Y += moveSpeed;
-            }
-
-            if (thisKeyboard[Key.R])
-            {
-                cubePosition = Vector3.Zero;
-            }
-
-            // Meniu ajutor
-            if (thisKeyboard[Key.H])
-            {
-                displayHelp();
-            }
+            // Display Info in console <lab3>
+            menu.trigger(thisKeyboard);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -127,83 +121,12 @@ namespace Pricob
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.Clear(ClearBufferMask.DepthBufferBit);
 
-            ///
-            /// Cod Render
-            ///
-            
-            // Render Cube laboratorul 2
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.PushMatrix();
-            GL.Translate(cubePosition);
-            RenderCube();
-            GL.PopMatrix();
-
+            // Render Cube <lab3>
+            for (int i = 0; i < cubes.Count; i++)
+            {
+                cubes[i].render();
+            }
             SwapBuffers();
-        }
-
-        private void RenderCube()
-        {
-            GL.Begin(PrimitiveType.Quads);
-
-
-            GL.Color3(Color.Silver);
-            GL.Vertex3(-cubeSize, -cubeSize, -cubeSize);
-            GL.Vertex3(-cubeSize, cubeSize, -cubeSize);
-            GL.Vertex3(cubeSize, cubeSize, -cubeSize);
-            GL.Vertex3(cubeSize, -cubeSize, -cubeSize);
-
-            GL.Color3(Color.Honeydew);
-            GL.Vertex3(-cubeSize, -cubeSize, -cubeSize);
-            GL.Vertex3(cubeSize, -cubeSize, -cubeSize);
-            GL.Vertex3(cubeSize, -cubeSize, cubeSize);
-            GL.Vertex3(-cubeSize, -cubeSize, cubeSize);
-
-            GL.Color3(Color.Moccasin);
-
-            GL.Vertex3(-cubeSize, -cubeSize, -cubeSize);
-            GL.Vertex3(-cubeSize, -cubeSize, cubeSize);
-            GL.Vertex3(-cubeSize, cubeSize, cubeSize);
-            GL.Vertex3(-cubeSize, cubeSize, -cubeSize);
-
-            GL.Color3(Color.IndianRed);
-            GL.Vertex3(-cubeSize, -cubeSize, cubeSize);
-            GL.Vertex3(cubeSize, -cubeSize, cubeSize);
-            GL.Vertex3(cubeSize, cubeSize, cubeSize);
-            GL.Vertex3(-cubeSize, cubeSize, cubeSize);
-
-            GL.Color3(Color.PaleVioletRed);
-            GL.Vertex3(-cubeSize, cubeSize, -cubeSize);
-            GL.Vertex3(-cubeSize, cubeSize, cubeSize);
-            GL.Vertex3(cubeSize, cubeSize, cubeSize);
-            GL.Vertex3(cubeSize, cubeSize, -cubeSize);
-
-            GL.Color3(Color.ForestGreen);
-            GL.Vertex3(cubeSize, -cubeSize, -cubeSize);
-            GL.Vertex3(cubeSize, cubeSize, -cubeSize);
-            GL.Vertex3(cubeSize, cubeSize, cubeSize);
-            GL.Vertex3(cubeSize, -cubeSize, cubeSize);
-
-
-            GL.End();
-        }
-
-
-        private void displayHelp()
-        {
-            Console.WriteLine("            MENIU");
-            Console.WriteLine("ESC - Parasire aplicatie");
-            Console.WriteLine("H - Meniu de ajutor");
-            Console.WriteLine("\n");
-            Console.WriteLine("W - Muta cubul in fata");
-            Console.WriteLine("A - Muta cubul la stanga");
-            Console.WriteLine("S - Muta cubul in spate");
-            Console.WriteLine("D - Muta cubul la dreapta");
-            Console.WriteLine("Q - Muta cubul in jos");
-            Console.WriteLine("E - Muta cubul in sus");
-            Console.WriteLine("\n");
-            Console.WriteLine("R - Reseteaza pozitia cubului");
-
-
         }
     }
 }
