@@ -10,8 +10,6 @@ Rularea proiectului pe mai mult de un monitor provoaca niste probleme
 # Laborator 2
 1. Modificarea Viewportului defineste suprafata pe care proiectia scenei 3D va avea loc.
 >
-2. Tema practica se poate gasi [aici](https://github.com/BP-Feral/ElementeDeGrafica/tree/main/Pricob).
->
 3. 
 - Un Viewport permite utilizatorului sa simuleze o camera pentru a viziona obiectele create din diferite unghiuri.
 - Conceptul de frames per second reprezinta numarul de cadre afisate intr-o secunda de program.
